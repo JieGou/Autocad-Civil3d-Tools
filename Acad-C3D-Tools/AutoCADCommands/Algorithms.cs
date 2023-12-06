@@ -1392,7 +1392,7 @@ namespace Dreambuild.AutoCAD
             int j = 0;
             for (int i = 1; i < points.Length; i++)
             {
-                // TODO: implement this.
+                // TODO: implement this.清除多段线共线多余点
                 throw new NotImplementedException();
             }
         }

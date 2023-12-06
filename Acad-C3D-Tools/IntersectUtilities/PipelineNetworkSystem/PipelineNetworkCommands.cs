@@ -55,7 +55,7 @@ namespace IntersectUtilities
         [CommandMethod("GRAPHPIPELINES")]
         public void testpipenetwork()
         {
-            prdDbg("Dette skal køres i FJV Fremtid!");
+            prdDbg("必须在 FJV Fremtid 中运行!");
 
             graphclear();
             graphpopulate();
@@ -97,7 +97,7 @@ namespace IntersectUtilities
         [CommandMethod("AUTOREVERSPLINESV2")]
         public void autoreverseplinesv2()
         {
-            prdDbg("Dette skal køres i FJV Fremtid!");
+            prdDbg("必须在 FJV Fremtid 中运行!");
 
             graphclear();
             graphpopulate();

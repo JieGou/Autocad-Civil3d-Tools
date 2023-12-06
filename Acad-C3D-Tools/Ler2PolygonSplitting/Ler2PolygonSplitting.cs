@@ -22,6 +22,7 @@ using Point = NetTopologySuite.Geometries.Point;
 using Autodesk.AutoCAD.Colors;
 using static Ler2PolygonSplitting.Utils;
 using IntersectUtilities;
+using Application = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace Ler2PolygonSplitting
 {
