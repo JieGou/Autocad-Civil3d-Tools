@@ -149,22 +149,28 @@
   <ItemGroup>
     <PackageReference Include="AutoCAD.NET">
       <Version>24.3.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="AutoCAD.NET.Core">
       <Version>24.3.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="AutoCAD.NET.Model">
       <Version>24.3.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
 
     <PackageReference Include="Chuongmep.Civil3D.Api.AecBaseMgd">
       <Version>2024.0.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Chuongmep.Civil3D.Api.AecPropDataMgd">
       <Version>2024.0.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Chuongmep.Civil3D.Api.AeccDbMgd">
       <Version>2024.0.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

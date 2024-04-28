@@ -51,6 +51,7 @@
   <ItemGroup>
     <PackageReference Include="AutoCAD.NET">
       <Version>24.3.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

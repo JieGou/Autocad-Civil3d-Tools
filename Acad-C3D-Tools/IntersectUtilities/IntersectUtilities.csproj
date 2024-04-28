@@ -290,27 +290,35 @@
   <ItemGroup>
     <PackageReference Include="Autocad.MPolygon.2024">
       <Version>1.0.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="AutoCAD.NET">
       <Version>24.3.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="AutoCAD.NET.Core">
       <Version>24.3.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="AutoCAD.NET.Model">
       <Version>24.3.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Chuongmep.Civil3D.Api.AecBaseMgd">
       <Version>2024.0.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Chuongmep.Civil3D.Api.AeccDataShortcutMgd">
       <Version>2024.0.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Chuongmep.Civil3D.Api.AeccDbMgd">
       <Version>2024.0.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Chuongmep.Civil3D.Api.AecPropDataMgd">
       <Version>2024.0.0</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces">
       <Version>7.0.0</Version>
