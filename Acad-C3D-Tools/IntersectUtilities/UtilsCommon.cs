@@ -409,7 +409,13 @@ namespace IntersectUtilities.UtilsCommon
         }
         public enum PipeSystemEnum
         {
+            /// <summary>
+            /// Unknown
+            /// </summary>
             Ukendt,
+            /// <summary>
+            /// Steel
+            /// </summary>
             Stål,
             Kobberflex,
             AluPex,

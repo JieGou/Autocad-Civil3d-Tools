@@ -3709,26 +3709,27 @@ namespace IntersectUtilities
         public void staggerlabels()
         {
 
-            DocumentCollection docCol = Application.DocumentManager;
-            Database localDb = docCol.MdiActiveDocument.Database;
-            Editor editor = docCol.MdiActiveDocument.Editor;
-            Document doc = docCol.MdiActiveDocument;
+            var docCol = Application.DocumentManager;
+            var doc = docCol.MdiActiveDocument;
+            var db = doc.Database;
+            var ed = doc.Editor;
+
             CivilDocument civilDoc = Autodesk.Civil.ApplicationServices.CivilApplication.ActiveDocument;
 
-            using (Transaction tx = localDb.TransactionManager.StartTransaction())
+            using (var tx = db.TransactionManager.StartTransaction())
             {
                 try
                 {
                     #region Get the selection set of all objects and profile view
                     PromptSelectionOptions pOptions = new PromptSelectionOptions();
-                    PromptSelectionResult sSetResult = editor.GetSelection(pOptions);
+                    PromptSelectionResult sSetResult = ed.GetSelection(pOptions);
                     if (sSetResult.Status != PromptStatus.OK) return;
+
                     HashSet<Entity> allEnts = sSetResult.Value.GetObjectIds().Select(e => e.Go<Entity>(tx)).ToHashSet();
                     #endregion
 
                     #region Setup styles
-                    LabelStyleCollection stc = civilDoc.Styles.LabelStyles
-                                                                   .ProjectionLabelStyles.ProfileViewProjectionLabelStyles;
+                    LabelStyleCollection stc = civilDoc.Styles.LabelStyles.ProjectionLabelStyles.ProfileViewProjectionLabelStyles;
 
                     Oid profileProjection_RIGHT_Style = Oid.Null;
                     Oid profileProjection_LEFT_Style = Oid.Null;
@@ -3739,7 +3740,7 @@ namespace IntersectUtilities
                     }
                     catch (System.Exception)
                     {
-                        editor.WriteMessage($"\nPROFILE PROJECTION RIGHT style missing!");
+                        ed.WriteMessage($"\nPROFILE PROJECTION RIGHT style missing!");
                         tx.Abort();
                         return;
                     }
@@ -3750,7 +3751,7 @@ namespace IntersectUtilities
                     }
                     catch (System.Exception)
                     {
-                        editor.WriteMessage($"\nPROFILE PROJECTION LEFT style missing!");
+                        ed.WriteMessage($"\nPROFILE PROJECTION LEFT style missing!");
                         tx.Abort();
                         return;
                     }
@@ -3762,8 +3763,10 @@ namespace IntersectUtilities
                     {
                         const string kwd1 = "Right";
                         const string kwd2 = "Left";
-                        PromptKeywordOptions pKeyOpts2 = new PromptKeywordOptions("");
-                        pKeyOpts2.Message = "\nChoose next label direction: ";
+                        PromptKeywordOptions pKeyOpts2 = new PromptKeywordOptions("")
+                        {
+                            Message = "\nChoose next label direction: "
+                        };
                         pKeyOpts2.Keywords.Add(kwd1);
                         pKeyOpts2.Keywords.Add(kwd2);
                         pKeyOpts2.AllowNone = true;
@@ -3773,7 +3776,7 @@ namespace IntersectUtilities
                     }
                     #endregion
 
-                    bool dirRight = AskToChooseDirection(editor) == "Right";
+                    bool dirRight = AskToChooseDirection(ed) == "Right";
 
                     #region Labels
                     HashSet<ProfileProjectionLabel> unSortedLabels = new HashSet<ProfileProjectionLabel>();
@@ -3826,7 +3829,7 @@ namespace IntersectUtilities
                 }
                 catch (System.Exception ex)
                 {
-                    editor.WriteMessage("\n" + ex.Message);
+                    ed.WriteMessage("\n" + ex.Message);
                     tx.Abort();
                     return;
                 }
@@ -3836,12 +3839,11 @@ namespace IntersectUtilities
 
         [CommandMethod("staggerlabelsall")]
         [CommandMethod("sgall")]
-        public void staggerlabelsall()
+        public void StaggerLabelsAll()
         {
-            staggerlabelsallmethod();
+            StaggerLabelsAllMethod();
         }
-        public void staggerlabelsallmethod(
-            Database db = default, HashSet<Oid> pvs = null)
+        public void StaggerLabelsAllMethod(Database db = default, HashSet<Oid> pvs = null)
         {
             DocumentCollection docCol = Application.DocumentManager;
             Database localDb = db ?? docCol.MdiActiveDocument.Database;
@@ -3854,12 +3856,10 @@ namespace IntersectUtilities
                 try
                 {
                     if (pvs == null) pvs = localDb.HashSetIdsOfType<ProfileView>();
-                    HashSet<ProfileProjectionLabel> labelsSet =
-                        localDb.HashSetOfType<ProfileProjectionLabel>(tx);
+                    HashSet<ProfileProjectionLabel> labelsSet = localDb.HashSetOfType<ProfileProjectionLabel>(tx);
 
                     #region Setup styles
-                    LabelStyleCollection stc = civilDoc.Styles.LabelStyles
-                        .ProjectionLabelStyles.ProfileViewProjectionLabelStyles;
+                    LabelStyleCollection stc = civilDoc.Styles.LabelStyles.ProjectionLabelStyles.ProfileViewProjectionLabelStyles;
 
                     Oid profileProjection_RIGHT_Style = Oid.Null;
                     Oid profileProjection_LEFT_Style = Oid.Null;
@@ -3894,9 +3894,11 @@ namespace IntersectUtilities
                     Oid rightStyleId = profileProjection_RIGHT_Style;
                     Oid leftStyleId = profileProjection_LEFT_Style;
 
+                    //Note 自定义的进度条也参照该使用方式
                     var pm = new ProgressMeter();
                     pm.Start("Staggering labels...");
                     pm.SetLimit(pvs.Count);
+
                     foreach (var pv in pvs.Select(x => x.Go<ProfileView>(tx)))
                     {
                         ProfileProjectionLabel[] allLabels;
@@ -3907,24 +3909,24 @@ namespace IntersectUtilities
                         //left array is ordered by X ascending
                         //right array is ordere by X descending
                         int half = allLabels.Length / 2;
-                        ProfileProjectionLabel[] leftLabels =
-                            allLabels.Take(half).ToArray();
-                        ProfileProjectionLabel[] rightLabels =
-                            allLabels.Skip(half).OrderByDescending(x => x.LabelLocation.X).ToArray();
+                        ProfileProjectionLabel[] leftLabels = allLabels.Take(half).ToArray();
+                        ProfileProjectionLabel[] rightLabels = allLabels.Skip(half).OrderByDescending(x => x.LabelLocation.X).ToArray();
 
                         var pIds = pv.AlignmentId.Go<Alignment>(tx).GetProfileIds();
                         Profile surfaceP = default;
                         foreach (Oid oid in pIds)
+                        {
                             if (oid.Go<Profile>(tx).Name.EndsWith("_surface_P"))
                                 surfaceP = oid.Go<Profile>(tx);
+                        }
+
                         if (surfaceP == null)
                             throw new System.Exception("Surface profile not found.");
 
                         SortLabels(leftLabels, surfaceP, leftStyleId);
                         SortLabels(rightLabels, surfaceP, rightStyleId);
 
-                        double FirstLabelCalculateLength(
-                            ProfileProjectionLabel label, Profile sP)
+                        double FirstLabelCalculateLength(ProfileProjectionLabel label, Profile sP)
                         {
                             if (sP != default)
                             {
@@ -3946,12 +3948,10 @@ namespace IntersectUtilities
                             else return 0;
                         }
 
-                        void SortLabels(
-                            ProfileProjectionLabel[] labels, Profile sP, Oid styleId)
+                        void SortLabels(ProfileProjectionLabel[] labels, Profile sP, Oid styleId)
                         {
                             if (labels.Length < 1) return;
-                            double calculatedLengthOfFirstLabel =
-                                FirstLabelCalculateLength(labels[0], sP);
+                            double calculatedLengthOfFirstLabel = FirstLabelCalculateLength(labels[0], sP);
 
                             if (labels.Length == 1)
                             {
@@ -3981,20 +3981,17 @@ namespace IntersectUtilities
                                 //secondLabel.GeometricExtents.DrawExtents(localDb);
                                 //Check to see if extents overlap
                                 double secondAnchorDimensionInMeters = 0;
-                                if (!secondLabel.GeometricExtents.ToExtents2d().IsOverlapping(
-                                    firstLabel.GeometricExtents.ToExtents2d()))
-                                {//Labels do not overlap, get length from surface
-                                    secondAnchorDimensionInMeters =
-                                        FirstLabelCalculateLength(secondLabel, sP);
+                                if (!secondLabel.GeometricExtents.ToExtents2d().IsOverlapping(firstLabel.GeometricExtents.ToExtents2d()))
+                                {
+                                    //Labels do not overlap, get length from surface
+                                    secondAnchorDimensionInMeters = FirstLabelCalculateLength(secondLabel, sP);
                                 }
                                 else
-                                {//Labels overlap, get length from previous
-                                    double firstAnchorDimensionInMeters =
-                                        firstLabel.DimensionAnchorValue * 250 + 0.0625;
-                                    double locationDelta =
-                                        firstLocationPoint.Y - secondLocationPoint.Y;
-                                    secondAnchorDimensionInMeters =
-                                        (locationDelta + firstAnchorDimensionInMeters + 0.75) / 250;
+                                {
+                                    //Labels overlap, get length from previous
+                                    double firstAnchorDimensionInMeters = firstLabel.DimensionAnchorValue * 250 + 0.0625;
+                                    double locationDelta = firstLocationPoint.Y - secondLocationPoint.Y;
+                                    secondAnchorDimensionInMeters = (locationDelta + firstAnchorDimensionInMeters + 0.75) / 250;
                                 }
 
                                 secondLabel.DimensionAnchorValue = secondAnchorDimensionInMeters;
@@ -4704,7 +4701,7 @@ namespace IntersectUtilities
         }
 
         [CommandMethod("UPDATESINGLEPROFILEVIEW")]
-        public void updatesingleprofileview()
+        public void UpdateSingleProfileView()
         {
             DocumentCollection docCol = Application.DocumentManager;
             Database localDb = docCol.MdiActiveDocument.Database;
@@ -4842,7 +4839,7 @@ namespace IntersectUtilities
                     createprofilesmethod(dro, new HashSet<Alignment> { al });
                     createpointsatverticesmethod(bufferedOriginalBbox);
                     createdetailingpreliminarymethod(dro, null, new HashSet<Alignment> { al });
-                    staggerlabelsallmethod(null, al.GetProfileViewIds().ToHashSet());
+                    StaggerLabelsAllMethod(null, al.GetProfileViewIds().ToHashSet());
                 }
                 catch (System.Exception ex)
                 {

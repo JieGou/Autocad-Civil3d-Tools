@@ -43,11 +43,23 @@ using System.Reflection;
 
 namespace AcadOverrules
 {
+    /// <summary>
+    /// Fjv多段线标签 规则重定义
+    /// </summary>
     public class FjvPolylineLabel : Autodesk.AutoCAD.GraphicsInterface.DrawableOverrule
     {
         #region Settings
+        /// <summary>
+        /// 距离
+        /// </summary>
         private const double labelDist = 25;
+        /// <summary>
+        /// 偏移
+        /// </summary>
         private const double labelOffset = 1.2;
+        /// <summary>
+        /// 高度
+        /// </summary>
         private const double labelHeight = 1.0;
         #endregion
 
@@ -59,8 +71,7 @@ namespace AcadOverrules
         //Collinear
         private const double collinearPolygonOuterOffset = 1.0;
 
-        private Point3dCollection createPolygonPointsCollinearSymbol(
-            Polyline pline, Vector3d dir)
+        private Point3dCollection createPolygonPointsCollinearSymbol(Polyline pline, Vector3d dir)
         {
             double plineWidth;
             try
@@ -102,68 +113,46 @@ namespace AcadOverrules
 
             return new Point3dCollection(points);
         }
-        private void drawTangencyViolatedPolygonAndLabel(
-            Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd,
-            double plineWidth,
-            Point3d vertPos,
-            Vector3d dir)
+        private void drawTangencyViolatedPolygonAndLabel(Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd, double plineWidth, Point3d vertPos, Vector3d dir)
         {
             //Use polypolygon
             //https://forums.autodesk.com/t5/net/drawjig-geometry-polypolygon/m-p/8909612/highlight/true#M63223
             //NumPolygonPositions -> how many polygons
             //Each value of this array represents the number of that kind of polygon
-            UInt32Collection numPolygonPositions =
-                new UInt32Collection(1) { 1 };
+            var numPolygonPositions = new UInt32Collection(1) { 1 };
 
             //polygonPositions
             //Point3d of polygon position
-            Point3dCollection polygonPositions =
-                new Point3dCollection() { vertPos };
+            var polygonPositions = new Point3dCollection() { vertPos };
 
             //numPolygonPoints
             //Input the number of the polygons' vertices.
-            UInt32Collection numPolygonPoints =
-                new UInt32Collection(1) { 4 };
+            var numPolygonPoints = new UInt32Collection(1) { 4 };
 
             //polygonPoints
             //the points of polygon
-            Point3dCollection polygonPoints =
-                createPolygonPointsTangencyViolated(plineWidth, dir);
+            var polygonPoints = createPolygonPointsTangencyViolated(plineWidth, dir);
 
             //outlineColors
             //Input the outline color for each polygon type, one outlineColor per polygon*index.
-            EntityColorCollection outlineColors =
-                new EntityColorCollection(1) {
-                                    new EntityColor(ColorMethod.ByAci, 2) };
+            var outlineColors = new EntityColorCollection(1) { new EntityColor(ColorMethod.ByAci, 2) };
 
             //outlineTypes
             //Input the outline type for each polygon type, one outlineType per polygon*index.
-            Autodesk.AutoCAD.GraphicsInterface.LinetypeCollection outlineTypes =
-                new Autodesk.AutoCAD.GraphicsInterface.LinetypeCollection()
-                    {
-                        Autodesk.AutoCAD.GraphicsInterface.Linetype.Solid
-                    };
+            var outlineTypes = new Autodesk.AutoCAD.GraphicsInterface.LinetypeCollection() { Autodesk.AutoCAD.GraphicsInterface.Linetype.Solid };
 
             //fillColors
             //Input the filled color for each polygon type, one fillColor per polygon index.
-            EntityColorCollection fillColors =
-                new EntityColorCollection(1) {
-                                    new EntityColor(ColorMethod.ByAci, 2) };
+            var fillColors = new EntityColorCollection(1) { new EntityColor(ColorMethod.ByAci, 2) };
 
             //fillOpacities
             //Input the opacity of polygon, one fillOpacity per polygon index
-            TransparencyCollection fillOpacities =
-                new TransparencyCollection(1) {
-                                    new Transparency((byte)255)
-                };
+            var fillOpacities = new TransparencyCollection(1) { new Transparency((byte)255) };
 
             //Draw the polygons
-            wd.Geometry.PolyPolygon(
-                numPolygonPositions, polygonPositions, numPolygonPoints,
-                polygonPoints, outlineColors, outlineTypes, fillColors, fillOpacities);
+            wd.Geometry.PolyPolygon(numPolygonPositions, polygonPositions, numPolygonPoints, polygonPoints, outlineColors, outlineTypes, fillColors, fillOpacities);
         }
-        private Point3dCollection createPolygonPointsTangencyViolated(
-            double plineWidth, Vector3d dir1)
+        private Point3dCollection createPolygonPointsTangencyViolated(double plineWidth, Vector3d dir1)
         {
             //Create starting points
             Point3d[] points = new Point3d[4];
@@ -203,91 +192,61 @@ namespace AcadOverrules
 
             return new Point3dCollection(points);
         }
-        private void drawCoincidentEmptyPointPolygon(
-            Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd,
-            Point3d vertPos, Vector3d dir
-            )
+        private void drawCoincidentEmptyPointPolygon(Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd, Point3d vertPos, Vector3d dir)
         {
             //Use polypolygon
             //https://forums.autodesk.com/t5/net/drawjig-geometry-polypolygon/m-p/8909612/highlight/true#M63223
             //NumPolygonPositions -> how many polygons
             //Each value of this array represents the number of that kind of polygon
-            UInt32Collection numPolygonPositions =
-                new UInt32Collection(1) { 1 };
+            var numPolygonPositions = new UInt32Collection(1) { 1 };
 
             //polygonPositions
             //Point3d of polygon position
-            Point3dCollection polygonPositions =
-                new Point3dCollection() { vertPos };
+            Point3dCollection polygonPositions = new Point3dCollection() { vertPos };
 
             //numPolygonPoints
             //Input the number of the polygons' vertices.
-            UInt32Collection numPolygonPoints =
-                new UInt32Collection(1) { 12 };
+            var numPolygonPoints = new UInt32Collection(1) { 12 };
 
             //polygonPoints
             //the points of polygon
-            Point3dCollection polygonPoints =
-                createPolygonPointsCoincidentEmptyPoint(dir);
+            Point3dCollection polygonPoints = createPolygonPointsCoincidentEmptyPoint(dir);
 
             //outlineColors
             //Input the outline color for each polygon type, one outlineColor per polygon*index.
-            EntityColorCollection outlineColors =
-                new EntityColorCollection(1) {
-                    new EntityColor(ColorMethod.ByAci, 2) };
+            var outlineColors = new EntityColorCollection(1) { new EntityColor(ColorMethod.ByAci, 2) };
 
             //outlineTypes
             //Input the outline type for each polygon type, one outlineType per polygon*index.
-            Autodesk.AutoCAD.GraphicsInterface.LinetypeCollection outlineTypes =
-                new Autodesk.AutoCAD.GraphicsInterface.LinetypeCollection()
-                    {
-                        Autodesk.AutoCAD.GraphicsInterface.Linetype.Solid
-                    };
+            var outlineTypes = new Autodesk.AutoCAD.GraphicsInterface.LinetypeCollection() { Autodesk.AutoCAD.GraphicsInterface.Linetype.Solid };
 
             //fillColors
             //Input the filled color for each polygon type, one fillColor per polygon index.
-            EntityColorCollection fillColors =
-                new EntityColorCollection(1) {
-                    new EntityColor(ColorMethod.ByAci, 2) };
+            var fillColors = new EntityColorCollection(1) { new EntityColor(ColorMethod.ByAci, 2) };
 
             //fillOpacities
             //Input the opacity of polygon, one fillOpacity per polygon index
-            TransparencyCollection fillOpacities =
-                new TransparencyCollection(1) {
-                    new Transparency((byte)255)
-                };
+            var fillOpacities = new TransparencyCollection(1) { new Transparency((byte)255) };
 
             //Draw the polygons
-            wd.Geometry.PolyPolygon(
-                numPolygonPositions, polygonPositions, numPolygonPoints,
-                polygonPoints, outlineColors, outlineTypes, fillColors, fillOpacities);
+            wd.Geometry.PolyPolygon(numPolygonPositions, polygonPositions, numPolygonPoints, polygonPoints, outlineColors, outlineTypes, fillColors, fillOpacities);
         }
-        private void drawAngleLabel(
-            Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd,
-            Point3d vertPos, double angleDeg, double plineWidth, Vector3d dir)
+        private void drawAngleLabel(Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd, Point3d vertPos, double angleDeg, double plineWidth, Vector3d dir)
         {
             Vector3d labelDir = -dir.GetPerpendicularVector();
 
-            wd.Geometry.Text(
-                vertPos + labelDir * (plineWidth * 1.5 + labelHeight),
-                Vector3d.ZAxis, dir, $"{angleDeg.ToString("0.####")}°",
-                true, style);
+            wd.Geometry.Text(vertPos + labelDir * (plineWidth * 1.5 + labelHeight), Vector3d.ZAxis, dir, $"{angleDeg.ToString("0.####")}°", true, style);
         }
         #endregion
 
         #region Impossible radius cross
-        private void drawImpossibleRadiusPolyPolygon(
-            Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd,
-            uint numberOfRepetitions,
-            Point3dCollection polygonPositions,
-            Vector3dCollection dirs
-            )
+        private void drawImpossibleRadiusPolyPolygon(Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd, uint numberOfRepetitions, Point3dCollection polygonPositions, Vector3dCollection dirs)
         {
             //Use polypolygon
             //https://forums.autodesk.com/t5/net/drawjig-geometry-polypolygon/m-p/8909612/highlight/true#M63223
             //NumPolygonPositions -> how many polygons
             //Each value of this array represents the number of that kind of polygon
-            UInt32Collection numPolygonPositions = new UInt32Collection();
+            var numPolygonPositions = new UInt32Collection();
             //    new UInt32Collection(1) { numberOfRepetitions };
             for (int i = 0; i < numberOfRepetitions; i++)
                 numPolygonPositions.Add(1);
@@ -299,14 +258,14 @@ namespace AcadOverrules
 
             //numPolygonPoints
             //Input the number of the polygons' vertices.
-            UInt32Collection numPolygonPoints = new UInt32Collection();
+            var numPolygonPoints = new UInt32Collection();
             //    new UInt32Collection(1) { 12 };
             for (int i = 0; i < numberOfRepetitions; i++)
                 numPolygonPoints.Add((uint)12);
 
             //polygonPoints
             //the points of polygon
-            Point3dCollection polygonPoints = new Point3dCollection();
+            var polygonPoints = new Point3dCollection();
             //createPolygonPointsImpossibleRadius();
             for (int i = 0; i < numberOfRepetitions; i++)
                 foreach (Point3d p3d in createPolygonPointsImpossibleRadius(dirs[i]))
@@ -314,7 +273,7 @@ namespace AcadOverrules
 
             //outlineColors
             //Input the outline color for each polygon type, one outlineColor per polygon*index.
-            EntityColorCollection outlineColors = new EntityColorCollection();
+            var outlineColors = new EntityColorCollection();
             for (int i = 0; i < numberOfRepetitions; i++)
                 outlineColors.Add(new EntityColor(ColorMethod.ByAci, 20));
             //new EntityColorCollection(2) {
@@ -354,9 +313,7 @@ namespace AcadOverrules
             //};
 
             //Draw the polygons
-            wd.Geometry.PolyPolygon(
-                numPolygonPositions, polygonPositions, numPolygonPoints,
-                polygonPoints, outlineColors, outlineTypes, fillColors, fillOpacities);
+            wd.Geometry.PolyPolygon(numPolygonPositions, polygonPositions, numPolygonPoints, polygonPoints, outlineColors, outlineTypes, fillColors, fillOpacities);
         }
         private Point3dCollection createPolygonPointsImpossibleRadius(Vector3d dir)
         {
@@ -428,9 +385,7 @@ namespace AcadOverrules
             }
             return false;
         }
-        public override bool WorldDraw(
-            Autodesk.AutoCAD.GraphicsInterface.Drawable drawable,
-            Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd)
+        public override bool WorldDraw(Autodesk.AutoCAD.GraphicsInterface.Drawable drawable, Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd)
         {
             base.WorldDraw(drawable, wd);
 
@@ -440,9 +395,7 @@ namespace AcadOverrules
             int numberOfLabels = (int)(length / labelDist);
             if (numberOfLabels == 0) numberOfLabels = 1;
             int dn = GetPipeDN(pline);
-            string system =
-                GetPipeType(pline) == PipeTypeEnum.Twin ?
-                "T" : "E";
+            string system = GetPipeType(pline) == PipeTypeEnum.Twin ? "T" : "E";
             string label = $"DN{dn}-{system}";
             var extents = style.ExtentsBox(label, true, false, null);
 
@@ -460,9 +413,7 @@ namespace AcadOverrules
 
                     Vector3d perp = deriv.GetPerpendicularVector();
 
-                    wd.Geometry.Text(
-                        pt - deriv * extents.MaxPoint.X / 2 + perp * labelOffset,
-                        Vector3d.ZAxis, deriv, label, true, style);
+                    wd.Geometry.Text(pt - deriv * extents.MaxPoint.X / 2 + perp * labelOffset, Vector3d.ZAxis, deriv, label, true, style);
                 }
                 catch (System.Exception ex)
                 {
@@ -478,7 +429,7 @@ namespace AcadOverrules
 
             }
 
-            #region Buerør label
+            #region Curved Pipe label
             int nrOfVertices = pline.NumberOfVertices;
 
             double minElasticRadius = GetPipeMinElasticRadius(pline, false);
@@ -567,8 +518,7 @@ namespace AcadOverrules
                             }
                         }
 
-                        drawImpossibleRadiusPolyPolygon(
-                            wd, Convert.ToUInt32(numberOfRepetitions), p3ds, v3ds);
+                        drawImpossibleRadiusPolyPolygon(wd, Convert.ToUInt32(numberOfRepetitions), p3ds, v3ds);
                     }
                 }
 
@@ -596,9 +546,7 @@ namespace AcadOverrules
 
                 //wd.Geometry.Text(
                 //    midPt + perp * (labelOffset + labelHeight + 0.7), Vector3d.ZAxis, deriv, labelHeight, 1.0, 0.0, label);
-                wd.Geometry.Text(
-                    midPt + deriv * -extents.MaxPoint.X / 2 + perp * (labelOffset + labelHeight + 0.7),
-                    Vector3d.ZAxis, deriv, label, true, style);
+                wd.Geometry.Text(midPt + deriv * -extents.MaxPoint.X / 2 + perp * (labelOffset + labelHeight + 0.7), Vector3d.ZAxis, deriv, label, true, style);
             }
             #endregion
 
@@ -630,59 +578,38 @@ namespace AcadOverrules
                             //https://forums.autodesk.com/t5/net/drawjig-geometry-polypolygon/m-p/8909612/highlight/true#M63223
                             //NumPolygonPositions -> how many polygons
                             //Each value of this array represents the number of that kind of polygon
-                            UInt32Collection numPolygonPositions =
-                                new UInt32Collection(2) { 1, 1 };
+                            var numPolygonPositions = new UInt32Collection(2) { 1, 1 };
 
                             //polygonPositions
                             //Point3d of polygon position
-                            Point3dCollection polygonPositions =
-                                new Point3dCollection() { vertPos, vertPos };
+                            var polygonPositions = new Point3dCollection() { vertPos, vertPos };
 
                             //numPolygonPoints
                             //Input the number of the polygons' vertices.
-                            UInt32Collection numPolygonPoints =
-                                new UInt32Collection(2) { 4, 4 };
+                            var numPolygonPoints = new UInt32Collection(2) { 4, 4 };
 
                             //polygonPoints
                             //the points of polygon
-                            Point3dCollection polygonPoints =
-                                createPolygonPointsCollinearSymbol(pline, dir);
+                            var polygonPoints = createPolygonPointsCollinearSymbol(pline, dir);
 
                             //outlineColors
                             //Input the outline color for each polygon type, one outlineColor per polygon*index.
-                            EntityColorCollection outlineColors =
-                                new EntityColorCollection(2) {
-                                    new EntityColor(ColorMethod.ByAci, 30),
-                                    new EntityColor(ColorMethod.ByAci, 30) };
+                            var outlineColors = new EntityColorCollection(2) { new EntityColor(ColorMethod.ByAci, 30), new EntityColor(ColorMethod.ByAci, 30) };
 
                             //outlineTypes
                             //Input the outline type for each polygon type, one outlineType per polygon*index.
-                            Autodesk.AutoCAD.GraphicsInterface.LinetypeCollection outlineTypes =
-                                new Autodesk.AutoCAD.GraphicsInterface.LinetypeCollection()
-                                    {
-                                        Autodesk.AutoCAD.GraphicsInterface.Linetype.Solid,
-                                        Autodesk.AutoCAD.GraphicsInterface.Linetype.Solid
-                                    };
+                            var outlineTypes = new Autodesk.AutoCAD.GraphicsInterface.LinetypeCollection() { Autodesk.AutoCAD.GraphicsInterface.Linetype.Solid, Autodesk.AutoCAD.GraphicsInterface.Linetype.Solid };
 
                             //fillColors
                             //Input the filled color for each polygon type, one fillColor per polygon index.
-                            EntityColorCollection fillColors =
-                                new EntityColorCollection(2) {
-                                    new EntityColor(ColorMethod.ByAci, 30),
-                                    new EntityColor(ColorMethod.ByAci, 30) };
+                            var fillColors = new EntityColorCollection(2) { new EntityColor(ColorMethod.ByAci, 30), new EntityColor(ColorMethod.ByAci, 30) };
 
                             //fillOpacities
                             //Input the opacity of polygon, one fillOpacity per polygon index
-                            TransparencyCollection fillOpacities =
-                                new TransparencyCollection(2) {
-                                    new Transparency((byte)255),
-                                    new Transparency((byte)255)
-                                };
+                            TransparencyCollection fillOpacities = new TransparencyCollection(2) { new Transparency((byte)255), new Transparency((byte)255) };
 
                             //Draw the polygons
-                            wd.Geometry.PolyPolygon(
-                                numPolygonPositions, polygonPositions, numPolygonPoints,
-                                polygonPoints, outlineColors, outlineTypes, fillColors, fillOpacities);
+                            wd.Geometry.PolyPolygon(numPolygonPositions, polygonPositions, numPolygonPoints, polygonPoints, outlineColors, outlineTypes, fillColors, fillOpacities);
                             #endregion
                         }
                         else
@@ -708,9 +635,7 @@ namespace AcadOverrules
                             }
                         }
                     }
-                    else if (
-                        (st1 == SegmentType.Arc || st1 == SegmentType.Line) &&
-                        (st2 == SegmentType.Arc || st2 == SegmentType.Line))
+                    else if ((st1 == SegmentType.Arc || st1 == SegmentType.Line) && (st2 == SegmentType.Arc || st2 == SegmentType.Line))
                     {
                         var dirs = pline.DirectionsAt(i + 1); //Uses look back, while for loop uses look forward
 
@@ -721,21 +646,18 @@ namespace AcadOverrules
                         {
                             double plineWidth = pline.ConstantWidthSafe();
                             if (plineWidth.IsZero()) plineWidth = 0.25;
-                            drawTangencyViolatedPolygonAndLabel(
-                                wd, plineWidth, vertPos, dirs.dir1);
+                            drawTangencyViolatedPolygonAndLabel(wd, plineWidth, vertPos, dirs.dir1);
                             drawAngleLabel(wd, vertPos, angleDeg, plineWidth, dirs.dir1);
                         }
                     }
                     else
-                    {//Segment
-                        if (st1 == SegmentType.Coincident ||
-                            st1 == SegmentType.Empty ||
-                            st1 == SegmentType.Point)
+                    {
+                        //Segment
+                        if (st1 == SegmentType.Coincident || st1 == SegmentType.Empty || st1 == SegmentType.Point)
                         {
                             Point3d loc = pline.GetPoint3dAt(i);
 
-                            drawCoincidentEmptyPointPolygon(wd, loc, pline.GetFirstDerivative(
-                                pline.GetClosestPointTo(loc, false)));
+                            drawCoincidentEmptyPointPolygon(wd, loc, pline.GetFirstDerivative(pline.GetClosestPointTo(loc, false)));
                         }
                     }
                 }

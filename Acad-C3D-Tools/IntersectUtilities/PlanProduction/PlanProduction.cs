@@ -307,7 +307,7 @@ namespace IntersectUtilities
             //Create detailing blocks on top of exaggerated views
             createdetailingmethod(dro, localDb);
             //Auto stagger all labels to right
-            staggerlabelsall();
+            StaggerLabelsAll();
             //Draw rectangles representing viewports around longitudinal profiles
             //Can be used to check if labels are inside
             drawviewportrectangles();
@@ -603,7 +603,7 @@ namespace IntersectUtilities
             if (hasMidt) createdetailingmethod(dro, localDb);
             else createdetailingpreliminarymethod(dro, localDb);
             //Auto stagger all labels to right
-            staggerlabelsall();
+            StaggerLabelsAll();
             //Draw rectangles representing viewports around longitudinal profiles
             //Can be used to check if labels are inside
             drawviewportrectangles();
@@ -863,7 +863,7 @@ namespace IntersectUtilities
             else createdetailingpreliminarymethod(dro, localDb);
 
             //Auto stagger all labels to right
-            staggerlabelsall();
+            StaggerLabelsAll();
             //Draw rectangles representing viewports around longitudinal profiles
             //Can be used to check if labels are inside
             drawviewportrectangles();

@@ -32,7 +32,7 @@ using Entity = Autodesk.AutoCAD.DatabaseServices.Entity;
 using ObjectIdCollection = Autodesk.AutoCAD.DatabaseServices.ObjectIdCollection;
 using Oid = Autodesk.AutoCAD.DatabaseServices.ObjectId;
 using OpenMode = Autodesk.AutoCAD.DatabaseServices.OpenMode;
-using Application = Autodesk.AutoCAD.ApplicationServices.Application;
+using Acap = Autodesk.AutoCAD.ApplicationServices.Application;
 using Label = Autodesk.Civil.DatabaseServices.Label;
 using DBObject = Autodesk.AutoCAD.DatabaseServices.DBObject;
 
@@ -57,7 +57,7 @@ namespace AcadOverrules
                 _fjvPolylineLabelOverrule.Dispose();
                 _fjvPolylineLabelOverrule = null;
             }
-            Application.DocumentManager.MdiActiveDocument.Editor.Regen();
+            Acap.DocumentManager.MdiActiveDocument.Editor.Regen();
         }                                                         
         
         private static GasPolylineLabel _GasPolylineLabelOverrule;
@@ -77,7 +77,7 @@ namespace AcadOverrules
                 _GasPolylineLabelOverrule.Dispose();
                 _GasPolylineLabelOverrule = null;
             }
-            Application.DocumentManager.MdiActiveDocument.Editor.Regen();
+            Acap.DocumentManager.MdiActiveDocument.Editor.Regen();
         }
 
         private static AlignmentNaMark _AlignmentNaMark;
@@ -98,7 +98,7 @@ namespace AcadOverrules
                 _AlignmentNaMark.Dispose();
                 _AlignmentNaMark = null;
             }
-            Application.DocumentManager.MdiActiveDocument.Editor.Regen();
+            Acap.DocumentManager.MdiActiveDocument.Editor.Regen();
         }
 
         private static PolylineDirection _polylineDirection;
@@ -118,13 +118,13 @@ namespace AcadOverrules
                 _polylineDirection.Dispose();
                 _polylineDirection = null;
             }
-            Application.DocumentManager.MdiActiveDocument.Editor.Regen();
+            Acap.DocumentManager.MdiActiveDocument.Editor.Regen();
         }
 
         private static PolylineDirFjv _polylineDirFjv;
 
         [CommandMethod("TOGGLEFJVDIR")]
-        public static void togglefjvdiroverrule()
+        public static void ToggleFjvdirOverrule()
         {
             if (_polylineDirFjv == null)
             {
@@ -138,13 +138,13 @@ namespace AcadOverrules
                 _polylineDirFjv.Dispose();
                 _polylineDirFjv = null;
             }
-            Application.DocumentManager.MdiActiveDocument.Editor.Regen();
+            Acap.DocumentManager.MdiActiveDocument.Editor.Regen();
         }
 
         private static GripVectorOverrule _gripVectorOverrule;
 
         [CommandMethod("TOGGLEGRIPOR")]
-        public static void togglegripoverrule()
+        public static void ToggleGripOverrule()
         {
             if (_gripVectorOverrule == null)
             {
@@ -158,7 +158,7 @@ namespace AcadOverrules
                 _gripVectorOverrule.Dispose();
                 _gripVectorOverrule = null;
             }
-            Application.DocumentManager.MdiActiveDocument.Editor.Regen();
+            Acap.DocumentManager.MdiActiveDocument.Editor.Regen();
         }
     }
 }

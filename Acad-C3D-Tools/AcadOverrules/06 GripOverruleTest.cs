@@ -16,7 +16,7 @@ namespace AcadOverrules
         // A single set of grips would not have worked in
         // the case where multiple objects were selected.
         static Dictionary<string, Point3dCollection> _gripDict = new Dictionary<string, Point3dCollection>();
-        public GripVectorOverrule() {}
+        public GripVectorOverrule() { }
         private string GetKey(Entity e)
         {
             // Generate a key based on the name of the object's type
@@ -60,22 +60,13 @@ namespace AcadOverrules
             return grips;
         }
 
-        public override void GetGripPoints(
-          Entity e,
-          Point3dCollection grips,
-          IntegerCollection snaps,
-          IntegerCollection geomIds
-        )
+        public override void GetGripPoints(Entity e, Point3dCollection grips, IntegerCollection snaps, IntegerCollection geomIds)
         {
             base.GetGripPoints(e, grips, snaps, geomIds);
             StoreGripInfo(e, grips);
         }
 
-        public override void MoveGripPointsAt(
-          Entity e,
-          IntegerCollection indices,
-          Vector3d offset
-        )
+        public override void MoveGripPointsAt(Entity e, IntegerCollection indices, Vector3d offset)
         {
             Document doc = Application.DocumentManager.MdiActiveDocument;
             Editor ed = doc.Editor;
@@ -97,12 +88,9 @@ namespace AcadOverrules
                     // These vectors don't getting cleared, which makes
                     // for a fun effect.
 
-                    ed.DrawVector(
-                      pt,
-                      pt + offset,
-                      (i >= 6 ? i + 2 : i + 1), // exclude colours 0 and 7
-                      false
-                    );
+                    // exclude colours 0 and 7
+                    int color = (i >= 6 ? i + 2 : i + 1);
+                    ed.DrawVector(pt, pt + offset, color, false);
                 }
             }
             base.MoveGripPointsAt(e, indices, offset);

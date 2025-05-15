@@ -36,17 +36,13 @@ namespace IntersectUtilities.PipelineNetworkSystem
             // because we need to create a network for each of them
             // we also need to get the names of parts that do not belong to any pipeline
             // ie. NA XX parts
-            var pplNames = ents.Select(
-                e => psh.Pipeline.ReadPropertyString(
-                    e, psh.PipelineDef.BelongsToAlignment)).Distinct();
+            var pplNames = ents.Select( e => psh.Pipeline.ReadPropertyString( e, psh.PipelineDef.BelongsToAlignment)).Distinct();
 
             // Create a network to be able to analyze our piping system
             foreach (var pplName in pplNames)
             {
                 // Get all the parts that belong to the pipeline
-                var pplEnts = ents.Where(
-                    e => psh.Pipeline.ReadPropertyString(
-                        e, psh.PipelineDef.BelongsToAlignment) == pplName);
+                var pplEnts = ents.Where( e => psh.Pipeline.ReadPropertyString( e, psh.PipelineDef.BelongsToAlignment) == pplName);
 
                 // Get the alignment that the pipeline belongs to
                 var al = als.FirstOrDefault(a => a.Name == pplName);

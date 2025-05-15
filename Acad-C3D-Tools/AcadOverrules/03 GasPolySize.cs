@@ -98,39 +98,33 @@ namespace AcadOverrules
             }
             return false;
         }
-        public override bool WorldDraw(
-            Autodesk.AutoCAD.GraphicsInterface.Drawable drawable,
-            Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd)
+        public override bool WorldDraw(Autodesk.AutoCAD.GraphicsInterface.Drawable drawable, Autodesk.AutoCAD.GraphicsInterface.WorldDraw wd)
         {
             base.WorldDraw(drawable, wd);
 
             Polyline pline = (Polyline)drawable;
-            
+
             double length = pline.Length;
 
             #region Size label
             double dist = length / 2;
             Point3d pt = pline.GetPointAtDist(dist);
-            int dn = PropertySetManager.ReadNonDefinedPropertySetInt(pline, "DriGasDimOgMat", "Dimension");
-            string mat = PropertySetManager.ReadNonDefinedPropertySetString(pline, "DriGasDimOgMat", "Material");
+            int dimension = PropertySetManager.ReadNonDefinedPropertySetInt(pline, "DriGasDimOgMat", "Dimension");
+            string material = PropertySetManager.ReadNonDefinedPropertySetString(pline, "DriGasDimOgMat", "Material");
 
-            if (mat.IsNoE() && dn == 0) return true;
-            if (!mat.IsNoE()) mat = " " + mat;
+            if (material.IsNoE() && dimension == 0) return true;
+            if (!material.IsNoE()) material = " " + material;
 
-            string label = $"{dn}{mat}";
+            string label = $"{dimension}{material}";
 
-            if (
-                pline.Layer == "GAS-ude af drift" ||
-                pline.Layer == "GAS-ude af drift-2D"
-                ) label += " UAD";
+            if (pline.Layer == "GAS-ude af drift" || pline.Layer == "GAS-ude af drift-2D") label += " UAD";
 
             Vector3d deriv = pline.GetFirstDerivative(pt);
             deriv = deriv.GetNormal();
 
             Vector3d perp = deriv.GetPerpendicularVector();
 
-            wd.Geometry.Text(
-                pt + perp * labelOffset, Vector3d.ZAxis, deriv, label, true, style);
+            wd.Geometry.Text(pt + perp * labelOffset, Vector3d.ZAxis, deriv, label, true, style);
             //pt + perp * labelOffset, Vector3d.ZAxis, deriv, labelHeight, 1.0, 0.0, label);
 
             //wd.Geometry.Text(
